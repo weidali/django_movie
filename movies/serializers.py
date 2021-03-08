@@ -15,10 +15,25 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FilterReviewListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        data = data.filter(parent=None)
+        return super(FilterReviewListSerializer, self).to_representation(data)
+
+
+class RecursiveSerializer(serializers.ModelSerializer):
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+
+
 class ReviewSerializer(serializers.ModelSerializer):
+    child = RecursiveSerializer(many=True)
+
     class Meta:
+        list_serializer_class = FilterReviewListSerializer
         model = Review
-        fields = ('name', 'email', 'text', 'parent',)
+        fields = ('name', 'email', 'text', 'child',)
 
 
 class MovieDetailSerializer(serializers.ModelSerializer):
