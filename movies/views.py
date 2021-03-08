@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework import generics
 
 from .models import *
 from .serializers import *
@@ -30,3 +31,13 @@ class ReviewCreateView(APIView):
         if review.is_valid():
             review.save()
         return Response(status=status.HTTP_201_CREATED)
+
+
+class ActorsListView(generics.ListAPIView):
+    queryset = Actor.objects.all()
+    serializer_class = ActorsListSerializer
+
+
+class ActorDetailView(generics.RetrieveAPIView):
+    queryset = Actor.objects.all()
+    serializer_class = ActorDetailSerializer

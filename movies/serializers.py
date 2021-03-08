@@ -1,12 +1,26 @@
-from rest_framework import serializers
+from rest_framework import serializers, generics
 from .models import *
+
+
+class ActorsListSerializer(serializers.ModelSerializer):
+    """Films list"""
+    class Meta:
+        model = Actor
+        fields = ('id', 'name', 'image', )
+
+
+class ActorDetailSerializer(serializers.ModelSerializer):
+    """Films list"""
+    class Meta:
+        model = Actor
+        fields = '__all__'
 
 
 class MovieListSerializer(serializers.ModelSerializer):
     """Films list"""
     class Meta:
         model = Movie
-        fields = ('title', 'tagline', 'country', 'category',)
+        fields = ('id', 'title', 'tagline', 'country', 'category',)
 
 
 class ReviewCreateSerializer(serializers.ModelSerializer):
@@ -39,8 +53,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 class MovieDetailSerializer(serializers.ModelSerializer):
     """Film detail"""
     category = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    directors = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
-    actors = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
+    directors = ActorsListSerializer(read_only=True, many=True)
+    actors = ActorsListSerializer(read_only=True, many=True)
     genres = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     reviews = ReviewSerializer(many=True)
 
