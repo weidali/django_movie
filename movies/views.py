@@ -1,6 +1,4 @@
 from django.shortcuts import render
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework import generics
 
@@ -8,29 +6,23 @@ from .models import *
 from .serializers import *
 
 
-class MovieListView(APIView):
+class MovieListView(generics.ListAPIView):
     """Input films list"""
-    def get(self, request):
+    serializer_class = MovieListSerializer
+
+    def get_queryset(self):
         movies = Movie.objects.filter(draft=False)
-        serializer = MovieListSerializer(movies, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return movies
 
 
-class MovieDetailView(APIView):
+class MovieDetailView(generics.RetrieveAPIView):
     """Input film's detail"""
-    def get(self, request, pk):
-        movie = Movie.objects.get(id=pk, draft=False)
-        serializer = MovieDetailSerializer(movie)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset = Movie.objects.filter(draft=False)
+    serializer_class = MovieDetailSerializer
 
 
-class ReviewCreateView(APIView):
-
-    def post(self, request):
-        review = ReviewCreateSerializer(data=request.data)
-        if review.is_valid():
-            review.save()
-        return Response(status=status.HTTP_201_CREATED)
+class ReviewCreateView(generics.CreateAPIView):
+    serializer_class = ReviewCreateSerializer
 
 
 class ActorsListView(generics.ListAPIView):
