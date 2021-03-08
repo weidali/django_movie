@@ -1,14 +1,18 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework import generics
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import *
 from .serializers import *
+from .service import *
 
 
 class MovieListView(generics.ListAPIView):
     """Input films list"""
     serializer_class = MovieListSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = MovieFilter
 
     def get_queryset(self):
         movies = Movie.objects.filter(draft=False)
