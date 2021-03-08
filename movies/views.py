@@ -21,3 +21,12 @@ class MovieDetailView(APIView):
         movie = Movie.objects.get(id=pk, draft=False)
         serializer = MovieDetailSerializer(movie)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ReviewCreateView(APIView):
+
+    def post(self, request):
+        review = ReviewCreateSerializer(data=request.data)
+        if review.is_valid():
+            review.save()
+        return Response(status=status.HTTP_201_CREATED)
